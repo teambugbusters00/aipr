@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Review Result - AI PR Reviewer{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-gradient text-white" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="mb-1">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            {{ result.jira_ticket.key }} / PR #{{ result.pr_diff.pr_number }}
+                        </h2>
+                        <p class="mb-0 opacity-75">{{ result.pr_diff.title }}</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <span class="verdict-badge verdict-{{ result.verdict.value.lower() }} fs-5">
+                            {% if result.verdict.value == 'PASS' %}✅ PASS
+                            {% elif result.verdict.value == 'PARTIAL' %}⚠️ PARTIAL
+                            {% elif result.verdict.value == 'FAIL' %}❌ FAIL
+                            {% else %}🔍 NEEDS REVIEW{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Stats -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-success">{{ result.passed_requirements }}</h3>
+                <p class="text-muted mb-0">Requirements Passed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-danger">{{ result.failed_requirements }}</h3>
+                <p class="text-muted mb-0">Requirements Failed</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3 class="text-warning">{{ result.risks|length }}</h3>
+                <p class="text-muted mb-0">Risks Detected</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ result.pr_diff.files_changed|length }}</h3>
+                <p class="text-muted mb-0">Files Changed</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Requirements Analysis -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Requirement Analysis</h5>
+            </div>
+            <div class="card-body">
+                {% for req in result.requirements %}
+                <div class="requirement-{{ req.status.value.lower() }} p-3 mb-2 rounded">
+                    <div class="d-flex align-items-center">
+                        <span class="me-3">
+                            {% if req.status.value == 'PASS' %}✅
+                            {% elif req.status.value == 'FAIL' %}❌
+                            {% else %}⚠️{% endif %}
+                        </span>
+                        <div class="flex-grow-1">
+                            <strong>{{ req.id }}</strong>: {{ req.text }}
+                            <br><small class="text-muted">{{ req.category }} • {{ req.priority }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Risks -->
+{% if result.risks %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Detected Risks</h5>
+            </div>
+            <div class="card-body">
+                {% for risk in result.risks %}
+                <div class="risk-{{ risk.level.value.lower() }} p-3 mb-2 rounded">
+                    <div class="d-flex align-items-start">
+                        <span class="me-3">
+                            {% if risk.level.value == 'CRITICAL' %}🔴
+                            {% elif risk.level.value == 'HIGH' %}🟠
+                            {% elif risk.level.value == 'MEDIUM' %}🟡
+                            {% else %}🔵{% endif %}
+                        </span>
+                        <div class="flex-grow-1">
+                            <strong>{{ risk.title }}</strong>
+                            <p class="mb-1 text-muted">{{ risk.description }}</p>
+                            {% if risk.file_path %}
+                            <code class="bg-light px-2 py-1 rounded">{{ risk.file_path }}</code>
+                            {% endif %}
+                            {% if risk.suggestion %}
+                            <br><small class="text-success"><i class="fas fa-lightbulb me-1"></i>{{ risk.suggestion }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Code Mappings -->
+{% if result.code_mappings %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-code me-2"></i>Requirement → Code Mapping</h5>
+            </div>
+            <div class="card-body">
+                {% for mapping in result.code_mappings %}
+                <div class="border-bottom pb-2 mb-2">
+                    <strong>{{ mapping.requirement_id }}</strong>: 
+                    <code>{{ mapping.file_path }}:{{ mapping.line_number }}</code>
+                    <p class="mb-0 text-muted small">{{ mapping.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Generated Tests -->
+{% if result.generated_tests %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-vial me-2"></i>AI-Generated Tests</h5>
+            </div>
+            <div class="card-body">
+                {% for test in result.generated_tests %}
+                <div class="mb-3">
+                    <h6>{{ test.name }} <span class="badge bg-secondary">{{ test.framework }}</span></h6>
+                    <pre class="code-snippet">{{ test.test_code[:500] }}{% if test.test_code|length > 500 %}...{% endif %}</pre>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Suggestions -->
+{% if result.suggestions %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Suggested Fixes</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    {% for suggestion in result.suggestions %}
+                    <li class="mb-2">{{ suggestion }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Actions -->
+<div class="row">
+    <div class="col-12">
+        <a href="/review" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>New Review
+        </a>
+        <a href="/" class="btn btn-secondary">
+            <i class="fas fa-home me-2"></i>Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

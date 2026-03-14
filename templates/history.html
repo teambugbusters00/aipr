@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}History - AI PR Reviewer{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-history me-2"></i>Review History</h2>
+    </div>
+</div>
+
+{% if reviews %}
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Jira Ticket</th>
+                <th>PR Number</th>
+                <th>Verdict</th>
+                <th>Passed</th>
+                <th>Failed</th>
+                <th>Risks</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+            <tr>
+                <td>#{{ review.id }}</td>
+                <td><strong>{{ review.jira_key }}</strong></td>
+                <td>#{{ review.pr_number }}</td>
+                <td>
+                    <span class="verdict-badge verdict-{{ review.verdict.lower() }}">
+                        {{ review.verdict }}
+                    </span>
+                </td>
+                <td class="text-success">{{ review.passed }}</td>
+                <td class="text-danger">{{ review.failed }}</td>
+                <td>{{ review.risks }}</td>
+                <td><small>{{ review.summary[:50] }}...</small></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-history fa-4x text-muted mb-3"></i>
+        <h4>No Reviews Yet</h4>
+        <p class="text-muted">Start your first review to see history here.</p>
+        <a href="/review" class="btn btn-primary">Start Review</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

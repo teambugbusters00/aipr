@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}About - AI PR Reviewer{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="mb-4"><i class="fas fa-robot text-primary me-2"></i>About AI PR Reviewer</h2>
+                
+                <p class="lead">
+                    A senior engineer PR review system that behaves like an experienced developer reviewing pull requests.
+                </p>
+                
+                <hr>
+                
+                <h4>Features</h4>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-link text-primary fa-2x me-3"></i>
+                            <div>
+                                <h5>Requirement → Code Mapping</h5>
+                                <p class="text-muted">Maps every requirement to actual code with line numbers and evidence</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-vial text-success fa-2x me-3"></i>
+                            <div>
+                                <h5>AI Test Generator</h5>
+                                <p class="text-muted">Automatically generates pytest tests from requirements</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-shield-alt text-danger fa-2x me-3"></i>
+                            <div>
+                                <h5>Risk Detection</h5>
+                                <p class="text-muted">Detects security, performance, and edge case risks</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-gavel text-warning fa-2x me-3"></i>
+                            <div>
+                                <h5>Verdict Generation</h5>
+                                <p class="text-muted">Provides PASS/PARTIAL/FAIL verdict with evidence</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h4>Architecture</h4>
+                
+                <div class="text-center my-4">
+                    <div class="card d-inline-block mx-2">
+                        <div class="card-body py-2 px-3">
+                            <i class="fab fa-jira"></i> Jira
+                        </div>
+                    </div>
+                    <i class="fas fa-arrow-right text-muted mx-2"></i>
+                    <div class="card d-inline-block mx-2">
+                        <div class="card-body py-2 px-3">
+                            <i class="fas fa-robot"></i> Orchestrator
+                        </div>
+                    </div>
+                    <i class="fas fa-arrow-right text-muted mx-2"></i>
+                    <div class="card d-inline-block mx-2">
+                        <div class="card-body py-2 px-3">
+                            <i class="fas fa-shield-alt"></i> Analyzer
+                        </div>
+                    </div>
+                    <i class="fas fa-arrow-right text-muted mx-2"></i>
+                    <div class="card d-inline-block mx-2">
+                        <div class="card-body py-2 px-3">
+                            <i class="fas fa-gavel"></i> Verdict
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h4>Supported AI Backends</h4>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Groq (fast, free tier)</li>
+                    <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>OpenAI (GPT-4)</li>
+                    <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>HuggingFace Transformers</li>
+                    <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>LLaMA.cpp (local)</li>
+                </ul>
+                
+                <hr>
+                
+                <h4>Technology Stack</h4>
+                <div class="mt-3">
+                    <span class="badge bg-primary me-2">Python</span>
+                    <span class="badge bg-info me-2">Flask</span>
+                    <span class="badge bg-success me-2">Groq API</span>
+                    <span class="badge bg-warning text-dark me-2">Bootstrap</span>
+                </div>
+                
+                <hr>
+                
+                <div class="text-center mt-4">
+                    <a href="/review" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play me-2"></i>Try It Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

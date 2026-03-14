@@ -1,0 +1,26 @@
+# AI PR Reviewer Dependencies
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+jinja2>=3.1.0
+
+# Core
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# Optional: For OpenAI API (set OPENAI_API_KEY)
+openai>=1.0.0
+
+# Optional: For Jira API (set JIRA_API_TOKEN)
+jira>=3.5.0
+
+# Optional: For GitHub API (set GITHUB_TOKEN)
+requests>=2.28.0
+
+# Optional: For running generated tests
+pytest>=7.0.0
+
+# Optional: For local transformer models
+transformers>=4.30.0
+torch>=2.0.0

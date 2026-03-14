@@ -1,0 +1,38 @@
+# AI PR Reviewer - Configuration
+# This file contains configuration settings for the AI PR Reviewer system
+
+# API Keys (set via environment variables)
+# OPENAI_API_KEY - OpenAI API key for LLM calls
+# JIRA_API_TOKEN - Jira API token
+# GITHUB_TOKEN - GitHub personal access token
+
+# Jira Configuration
+jira:
+  domain: "your-domain.atlassian.net"
+  email: "your-email@company.com"
+  # Token set via JIRA_API_TOKEN env var
+
+# GitHub Configuration
+github:
+  owner: "your-org"
+  repo: "your-repo"
+  # Token set via GITHUB_TOKEN env var
+
+# AI Model Configuration
+ai:
+  model: "gpt-4"
+  temperature: 0.3
+  max_tokens: 4000
+
+# Analysis Settings
+analysis:
+  max_diff_lines: 10000
+  include_comments: true
+  detect_security_risks: true
+  detect_performance_issues: true
+
+# Test Generation Settings
+tests:
+  framework: "pytest"
+  output_dir: "generated_tests"
+  auto_run: false

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI PR Reviewer - PROJ-101 / PR #245</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .verdict-banner {
+            background: #eab308;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .verdict-banner h2 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        
+        .summary {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .requirement {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+        }
+        
+        .requirement.pass { border-left: 4px solid #22c55e; }
+        .requirement.fail { border-left: 4px solid #ef4444; }
+        .requirement.partial { border-left: 4px solid #eab308; }
+        
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .status-icon.pass { background: #dcfce7; color: #22c55e; }
+        .status-icon.fail { background: #fee2e2; color: #ef4444; }
+        .status-icon.partial { background: #fef9c3; color: #eab308; }
+        
+        .req-text {
+            font-size: 14px;
+        }
+        
+        .req-id {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        
+        .risk {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .risk.critical { background: #fef2f2; border-left: 4px solid #ef4444; }
+        .risk.high { background: #fff7ed; border-left: 4px solid #f97316; }
+        .risk.medium { background: #fefce8; border-left: 4px solid #eab308; }
+        .risk.low { background: #f0f9ff; border-left: 4px solid #3b82f6; }
+        
+        .risk-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .risk-description {
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .suggestion {
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .mapping {
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        
+        .mapping-file {
+            font-family: monospace;
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .test-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .stat {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        
+        .stat.pass .stat-value { color: #22c55e; }
+        .stat.fail .stat-value { color: #ef4444; }
+        .stat.risk .stat-value { color: #f97316; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 AI PR Reviewer</h1>
+            <div class="meta">
+                <span>📋 Jira: PROJ-101</span>
+                <span>🔀 GitHub PR: #245</span>
+                <span>👤 Author: developer</span>
+                <span>🌿 feature/password-reset → main</span>
+            </div>
+        </header>
+        
+        <div class="verdict-banner">
+            <h2>PARTIAL</h2>
+            <p>This PR review for #245, implementing the password reset feature (PROJ-101), shows that 4 out of 7 requirements have passed, with 3 still pending. Two risks were detected, but none were deemed critical. Overall, the PR is partially complete and requires further work to address the failed requirements.</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat pass">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Requirements Passed</div>
+            </div>
+            <div class="stat fail">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Requirements Failed</div>
+            </div>
+            <div class="stat risk">
+                <div class="stat-value">2</div>
+                <div class="stat-label">Risks Detected</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">2</div>
+                <div class="stat-label">Files Changed</div>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>📋 Requirements Analysis</h3>
+                <div class="requirement PASS">
+                        <div class="status-icon PASS">
+                            ✓
+                        </div>
+                        <div>
+                            <div class="req-id">REQ-001 • security • high</div>
+                            <div class="req-text">Password reset link expires in 15 minutes</div>
+                        </div>
+                    </div><div class="requirement PASS">
+                        <div class="status-icon PASS">
+                            ✓
+                        </div>
+                        <div>
+                            <div class="req-id">REQ-002 • security • high</div>
+                            <div class="req-text">Password must be at least 8 characters</div>
+                        </div>
+                    </div><div class="requirement PASS">
+                        <div class="status-icon PASS">
+                            ✓
+                        </div>
+                        <div>
+                            <div class="req-id">REQ-003 • security • medium</div>
+                            <div class="req-text">Password must contain at least one uppercase letter</div>
+                        </div>
+                    </div><div class="requirement PASS">
+                        <div class="status-icon PASS">
+                            ✓
+                        </div>
+                        <div>
+                            <div class="req-id">REQ-004 • security • medium</div>
+                            <div class="req-text">Password must contain at least one number</div>
+                        </div>
+                    </div><div class="requirement FAIL">
+                        <div class="status-icon FAIL">
+                            ✗
+                        </div>
+                        <div>
+                            <div class="req-id">REQ-005 • security • critical</div>
+                            <div class="req-text">Token should be securely hashed before storage</div>
+                        </div>
+                    </div><div class="requirement FAIL">
+                        <div class="status-icon FAIL">
+                            ✗
+                        </div>
+                        <div>
+                            <div class="req-id">REQ-006 • functionality • high</div>
+                            <div class="req-text">User receives email with reset link</div>
+                        </div>
+                    </div><div class="requirement FAIL">
+                        <div class="status-icon FAIL">
+                            ✗
+                        </div>
+                        <div>
+                            <div class="req-id">REQ-007 • security • high</div>
+                            <div class="req-text">After password reset, all other sessions are invalidated</div>
+                        </div>
+                    </div>
+            </div>
+            
+            <div class="card">
+                <h3>⚠️ Detected Risks</h3>
+                
+                <div class="risk high">
+                        <div class="risk-title">Potential plaintext password storage</div>
+                        <div class="risk-description">Found potential plaintext password assignment. Use secure hashing.</div>
+                        <div class='mapping-file'>auth/reset.py</div>
+                    </div><div class="risk high">
+                        <div class="risk-title">Token stored without hashing</div>
+                        <div class="risk-description">Reset token stored in plaintext. Should be hashed before storage.</div>
+                        <div class='mapping-file'>auth/reset.py</div>
+                    </div>
+            </div>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>🔗 Requirement → Code Mapping</h3>
+                
+                <div class="mapping">
+                        <div class="req-id">REQ-001</div>
+                        <div><span class="mapping-file">auth/reset.py:4</span></div>
+                        <div>Found expiry_time in auth/reset.py</div>
+                    </div><div class="mapping">
+                        <div class="req-id">REQ-001</div>
+                        <div><span class="mapping-file">auth/reset.py:21</span></div>
+                        <div>Found expiry_time in auth/reset.py</div>
+                    </div><div class="mapping">
+                        <div class="req-id">REQ-001</div>
+                        <div><span class="mapping-file">auth/reset.py:4</span></div>
+                        <div>Found expiry_check in auth/reset.py</div>
+                    </div><div class="mapping">
+                        <div class="req-id">REQ-001</div>
+                        <div><span class="mapping-file">auth/reset.py:21</span></div>
+                        <div>Found expiry_check in auth/reset.py</div>
+                    </div><div class="mapping">
+                        <div class="req-id">REQ-002</div>
+                        <div><span class="mapping-file">auth/validators.py:2</span></div>
+                        <div>Found length_check in auth/validators.py</div>
+                    </div><div class="mapping">
+                        <div class="req-id">REQ-003</div>
+                        <div><span class="mapping-file">auth/validators.py:4</span></div>
+                        <div>Found uppercase in auth/validators.py</div>
+                    </div><div class="mapping">
+                        <div class="req-id">REQ-004</div>
+                        <div><span class="mapping-file">auth/validators.py:6</span></div>
+                        <div>Found number in auth/validators.py</div>
+                    </div>
+            </div>
+            
+            <div class="card">
+                <h3>💡 Suggested Fixes</h3>
+                <p>No suggestions</p>
+                
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>🧪 AI-Generated Tests</h3>
+            <p>No tests generated</p>
+            
+        </div>
+        
+        <footer style="text-align: center; padding: 20px; color: #64748b; font-size: 12px;">
+            Generated by AI PR Reviewer • 2026-03-15 02:26:16
+        </footer>
+    </div>
+</body>
+</html>

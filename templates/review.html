@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}New Review - AI PR Reviewer{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-search me-2"></i>Start New Review</h4>
+            </div>
+            <div class="card-body">
+                {% if error %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="/review">
+                    <div class="mb-3">
+                        <label for="jira_key" class="form-label">
+                            <i class="fab fa-jira me-2"></i>Jira Ticket Key
+                        </label>
+                        <input type="text" class="form-control" id="jira_key" name="jira_key" 
+                               placeholder="e.g., PROJ-101" required>
+                        <div class="form-text">The Jira ticket key to analyze</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="pr_number" class="form-label">
+                            <i class="fab fa-github me-2"></i>GitHub PR Number
+                        </label>
+                        <input type="number" class="form-control" id="pr_number" name="pr_number" 
+                               placeholder="e.g., 245" required>
+                        <div class="form-text">The GitHub pull request number</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-play me-2"></i>Start Review
+                        </button>
+                        <a href="/demo" class="btn btn-outline-secondary">
+                            <i class="fas fa-flask me-2"></i>Try Demo Instead
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Info Card -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5><i class="fas fa-info-circle text-info me-2"></i>How it works</h5>
+                <ol class="text-muted">
+                    <li>Enter your Jira ticket key and GitHub PR number</li>
+                    <li>Our AI agents will fetch the ticket and PR details</li>
+                    <li>Requirements are extracted and mapped to code</li>
+                    <li>Security and performance risks are detected</li>
+                    <li>Tests are automatically generated</li>
+                    <li>Get a detailed verdict with evidence</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
