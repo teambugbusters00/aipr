@@ -1,3 +1,10 @@
+url deployed : https://huggingface.co/spaces/jarvisemitra/aipr
+Model	URL
+Llama 3.3 70B	meta-llama/Llama-3.3-70B-Instruct
+CodeLlama	codellama/CodeLlama-70b-Instruct-hf
+Mistral	mistralai/Mistral-7B-Instruct-v0.2
+Qwen 2.5	Qwen/Qwen2.5-72B-Instruct
+
 Here are all the API URLs used in the project:
 
 1. Groq AI API (Primary)
